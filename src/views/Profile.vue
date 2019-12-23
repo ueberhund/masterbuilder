@@ -28,35 +28,6 @@
             <q-progress :percentage="loyalty.percentage" color="secondary" />
           </div>
         </div>
-        <div class="row">
-          <div class="profile__preferences--heading col-12 text-left q-mt-lg">
-            <q-toolbar color="grey-1 text-black">
-              <q-toolbar-title class="text-bold">Preferences</q-toolbar-title>
-            </q-toolbar>
-          </div>
-          <div class="profile__preferences-options col-12">
-            <q-list highlight no-border class="q-pa-none q-ml-md" link>
-              <a @click="choosePreference('diet')">
-                <q-item class="q-pa-none q-mt-md profile__preferences-option">
-                  <q-icon name="tune" size="2.6rem" />
-                  <q-item-main
-                    class="text-bold q-title q-ml-md"
-                    label="Dietary requirements"
-                  />
-                </q-item>
-              </a>
-              <a @click="choosePreference('luggage')">
-                <q-item class="q-pa-none q-mt-md profile__preferences-option">
-                  <q-icon name="tune" size="2.6rem" />
-                  <q-item-main
-                    class="text-bold q-title q-ml-md"
-                    label="Luggage"
-                  />
-                </q-item>
-              </a>
-            </q-list>
-          </div>
-        </div>
       </div>
       <amplify-sign-out class="Form--signout"></amplify-sign-out>
     </div>

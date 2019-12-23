@@ -27,7 +27,7 @@
                   {{ details.arrivalAirportCode }}
                 </div>
                 <div class="q-caption capitalize text-secondary text-bold">
-                  {{ details.arrivalAirportName }}
+                  {{ details.arrivalAirportName }}<br/>
                 </div>
               </div>
             </div>

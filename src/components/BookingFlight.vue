@@ -6,7 +6,7 @@
     <BookingCard
       ref="card"
       :reference="bookingID"
-      name="Billy Shears"
+      :name="user.attributes.given_name+' '+user.attributes.family_name"
       :departureDate="flight.departureDate"
       :departureAirportName="flight.departureAirportName"
       :departureIata="flight.departureAirportCode"
@@ -22,6 +22,8 @@
 import FlightCard from "./FlightCard";
 // @ts-ignore
 import BookingCard from "./BookingCard";
+import { mapState, mapGetters } from "vuex";
+//import { AmplifyEventBus } from "aws-amplify-vue";
 
 export default {
   /**
@@ -46,7 +48,13 @@ export default {
     BookingCard,
     FlightCard
   },
-
+  computed: {
+    ...mapState({
+      user: state => state.profile.user,
+      loyalty: state => state.loyalty.loyalty
+    }),
+    ...mapGetters("profile", ["isAuthenticated"])
+  },
   props: {
     /**
      * @param {string} bookingID - Sets Booking ID

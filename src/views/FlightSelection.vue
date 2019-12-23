@@ -108,6 +108,12 @@ import FlightLoader from "../components/FlightLoader";
 import { validationMixin } from "vuelidate";
 import { required, minLength } from "vuelidate/lib/validators";
 import { mapState, mapGetters } from "vuex";
+import { createBooking } from "../graphql/mutations";
+import { API, graphqlOperation } from 'aws-amplify';
+import {
+  processBooking as processBookingMutation,
+  getBookingByStatus
+} from "../graphql/mutations";
 var stripe, card;
 
 /**
@@ -149,7 +155,11 @@ export default {
    * @param {boolean} loading - Loader state used to control Flight Loader when fetching flights
    */
   computed: {
-    ...mapGetters("profile", ["isAuthenticated"]),
+    ...mapGetters({
+      firstName: "profile/firstName",
+      customer: "profile/userAttributes",
+      isAuthenticated: "profile/isAuthenticated"
+    }),
     ...mapState({
       loading: state => state.catalog.loading
     })
@@ -207,16 +217,12 @@ export default {
         postcode: "",
         countryOptions: [
           {
-            label: "Brazil",
-            value: "BR"
+            label: "United States",
+            value: "US"
           },
           {
             label: "United Kingdom",
             value: "UK"
-          },
-          {
-            label: "United States",
-            value: "US"
           }
         ],
         isCardInvalid: true
@@ -238,11 +244,40 @@ export default {
       };
 
       try {
-        const { token, error } = await stripe.createToken(card, options);
-        this.token.details = token;
-        this.token.error = error;
+        /*
+        const bookingData = {
+          customer: "f171aa56-c9f6-4542-81d5-97a47d8ee260",
+          bookingOutboundFlightId: flightId,
+          paymentToken: "token"
+        };
+        console.log(bookingData);
+        */
+        //let charge = await API.graphql(graphqlOperation(createBooking, bookingData));
+        //const { token, error } = await stripe.createToken(card, options);
+        //this.token.details = token;
+        //this.token.error = error;
 
-        if (this.token.error) throw this.token.error;
+        //if (this.token.error) throw this.token.error;
+
+        const processBookingInput = {
+          input : {
+            paymentToken : "token",
+            bookingOutboundFlightId: "6fb36039-953d-4984-b86b-947a6573944b"
+          }
+        };
+        console.log(processBookingInput);
+        try {
+          const { 
+            // @ts-ignore
+            data: {
+              processBooking: {id: bookingProcessId}
+            }
+          } = await API.graphql(graphqlOperation(processBookingMutation, processBookingInput));
+          //return bookingProcessId;
+        } catch (err) {
+          console.error(err);
+          throw err;
+        }
 
         await this.$store.dispatch("bookings/createBooking", {
           paymentToken: this.token,

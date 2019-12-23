@@ -4,6 +4,13 @@ import Flight from "../../shared/models/FlightClass";
 import { Loading } from "quasar";
 import axios from "axios";
 
+import { API, graphqlOperation } from "aws-amplify";
+import {
+  processBooking as processBookingMutation,
+  getBookingByStatus
+} from "./graphql";
+import { listBookings, getBooking } from "../../graphql/queries";
+
 /**
  *
  * Booking [Vuex Module Action](https://vuex.vuejs.org/guide/actions.html) - fetchBooking retrieves all bookings for current authenticated customer.
@@ -28,23 +35,92 @@ import axios from "axios";
  *    ...mapGetters("profile", ["isAuthenticated"])
  * }
  */
+
+export async function fetchBooking(
+  { commit, rootGetters },
+  paginationToken = ""
+) {
+  console.group("store/bookings/actions/fetchBooking");
+  Loading.show({
+    message: "Loading bookings..."
+  });
+
+  try {
+    const customerId = "f171aa56-c9f6-4542-81d5-97a47d8ee260"
+    const bookingFilter = {
+      customer: {
+        eq: customerId
+      }
+    };
+
+    console.log("Fetching booking data");
+    console.log(bookingFilter);
+    const {
+      // @ts-ignore
+      data: {
+        listBookings: { items: bookingData, nextToken: paginationToken }
+      }
+    } = await API.graphql(graphqlOperation(listBookings, bookingFilter));
+    console.log(bookingData);
+
+    let bookings = bookingData.map(booking => new Booking(booking));
+    bookings.map(booking => {
+        //TODO: Fix inbound flights
+        //booking.inboundFlight = new Flight(booking.inboundFlight);
+        booking.outboundFlight = new Flight(booking.outboundFlight);
+    });
+
+    console.log(bookings);
+
+    commit("SET_BOOKINGS", bookings);
+    commit("SET_BOOKING_PAGINATION", paginationToken);
+
+    Loading.hide();
+    console.groupEnd();
+  } catch (err) {
+    Loading.hide();
+    console.error(err);
+    throw new Error(err);
+  }
+}
+
+/*
 export function fetchBooking({ commit }) {
   return new Promise(async (resolve, reject) => {
     Loading.show({
       message: "Loading bookings..."
     });
 
+    var pagin = null;
     try {
-      const { data: bookingData } = await axios.get("/mocks/bookings.json");
-      const bookings = bookingData.map(booking => new Booking(booking));
-      bookings.map(booking => {
-        booking.inboundFlight = new Flight(booking.inboundFlight);
-        booking.outboundFlight = new Flight(booking.outboundFlight);
+      const bookingFilter = {
+        customer: {
+          eq: "f171aa56-c9f6-4542-81d5-97a47d8ee260"
+        }
+      };
 
-        return booking;
-      });
+      const {
+        // @ts-ignore
+        data: {
+          getBookingByStatus: { items: bookingData, nextToken: paginationToken}
+        }
+      } = await API.graphql(graphqlOperation(getBooking, bookingFilter));
 
-      commit("SET_BOOKINGS", bookings);
+      console.log(bookingData);
+      //var bookingData = await API.graphql(graphqlOperation(listBookings, bookingFilter));
+      //console.log(bookingData);
+
+      //let bookings = bookingData.map(booking => new Booking(bookingData));
+      let bookings = 
+      //let bookings = bookingData.map(booking => new Booking(booking));
+      //bookings.map(booking => {
+        //booking.inboundFlight = new Flight(booking.inboundFlight);
+        //booking.outboundFlight = new Flight(booking.outboundFlight);
+
+       //return booking;
+      //);
+
+      //commit("SET_BOOKINGS", bookings);
 
       resolve();
       Loading.hide();
@@ -54,7 +130,7 @@ export function fetchBooking({ commit }) {
     }
   });
 }
-
+*/
 /**
  *
  * Booking [Vuex Module Action](https://vuex.vuejs.org/guide/actions.html) - createBooking attempts payment charge via Payment service, and it effectively books a flight if payment is accepted.
