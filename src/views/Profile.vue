@@ -3,7 +3,7 @@
     <div class="col-12 wrapper">
       <div class="heading">
         <div class="text-primary q-display-1 loyalty__heading--name">
-          Heitor F. Lessa
+          {{ user.attributes.given_name }} {{ user.attributes.family_name }}
         </div>
         <div class="loyalty__heading--tier">
           <div class="q-title loyalty__heading-tier-name">
