@@ -262,7 +262,7 @@ export default {
         const processBookingInput = {
           input : {
             paymentToken : "token",
-            bookingOutboundFlightId: "6fb36039-953d-4984-b86b-947a6573944b"
+            bookingOutboundFlightId: "19f6a4c5-b150-4e8c-b902-5bdaad3a6491"
           }
         };
         console.log(processBookingInput);
