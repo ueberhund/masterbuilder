@@ -117,7 +117,6 @@ import {
 var stripe, card;
 
 /**
- *
  * Flight Selection view displays selected Flight chosen by customer in Flight Results view along with Payment procedure
  */
 export default {
