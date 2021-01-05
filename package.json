@@ -14,7 +14,7 @@
     "@quasar/cli": "^1.0.5",
     "aws-amplify": "^1.2.4",
     "aws-amplify-vue": "^0.2.17",
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "cypress": "^3.4.1",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
